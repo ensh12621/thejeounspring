@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.EmpMapper">
+	
+	<select id="selectEmpList" resultType="com.example.demo.model.Emp">
+		SELECT E.*, D.*, S.*
+		FROM EMP E
+		JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+		JOIN SALGRADE S ON E.SAL BETWEEN S.LOSAL AND S.HISAL 
+	</select>
+
+	<delete id="deleteEmp" parameterType="hashmap">
+		DELETE FROM EMP WHERE EMPNO = #{empNo}
+	</delete>
+</mapper>
