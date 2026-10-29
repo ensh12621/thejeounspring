@@ -8,6 +8,7 @@
 		SELECT P.*, D.* 
 		FROM PROFESSOR P
 		LEFT JOIN DEPARTMENT D ON P.DEPTNO = D.DEPTNO 
+		WHERE P.NAME LIKE concat('%', #{keyword} , '%')
 	</select>
 
 	<!--int deleteProfessor(HashMap<String, Object> requestMap);-->
