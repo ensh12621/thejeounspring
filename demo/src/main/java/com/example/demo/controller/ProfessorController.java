@@ -31,10 +31,26 @@ public class ProfessorController {
 		return "/professor/add";
 	}
 	
+	@RequestMapping("/professor/view.do")
+	public String viewProfessor(Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map.toString());
+		model.addAttribute("profNo", map.get("profNo"));
+		return "/professor/view";
+	}
+	
+	@RequestMapping("/professor/edit.do")
+	public String editProfessor(Model model, @RequestParam HashMap<String, Object> map) throws Exception{
+		System.out.println(map.toString());
+		model.addAttribute("profNo", map.get("profNo"));
+		return "/professor/edit";
+	}
+	
+	
 	@RequestMapping(value = "/professor/list.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String removeStudent(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		Map<String, Object> resultMap = professorService.getProfessorList(map);
+		System.out.println("list.dox 컨트롤러 진입완료");
 		return new Gson().toJson(resultMap); 
 	}
 	
@@ -63,6 +79,14 @@ public class ProfessorController {
 	@ResponseBody
 	public String departmentList(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		Map<String, Object> resultMap = professorService.getDepartmentList(map);
+		return new Gson().toJson(resultMap); 
+	}
+	
+	
+	@RequestMapping(value = "/professor/edit.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String editProfessorAjax(Model model, @RequestParam HashMap<String, Object> requestMap) throws Exception {
+		Map<String, Object> resultMap = professorService.editProfessor(requestMap);
 		return new Gson().toJson(resultMap); 
 	}
 }

@@ -7,11 +7,34 @@
 	<select id="selectEmpList" resultType="com.example.demo.model.Emp">
 		SELECT E.*, D.*, S.*
 		FROM EMP E
-		JOIN DEPT D ON E.DEPTNO = D.DEPTNO
-		JOIN SALGRADE S ON E.SAL BETWEEN S.LOSAL AND S.HISAL 
+		left JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+		JOIN SALGRADE S ON E.SAL BETWEEN S.LOSAL AND S.HISAL
+		<where> 
+		 	<if test="salgrade != null and salgrade != ''">
+		 		S.GRADE = #{salgrade}	
+			</if>
+		</where>
 	</select>
 
 	<delete id="deleteEmp" parameterType="hashmap">
 		DELETE FROM EMP WHERE EMPNO = #{empNo}
 	</delete>
+	
+	<insert id="insertEmployee" parameterType="hashmap">
+		INSERT INTO EMP(EMPNO, ENAME, JOB, SAL) VALUES (
+			#{empNo}, #{ename}, #{job}, #{sal}
+		)
+	</insert>
+	
+	<select id="selectEmp" parameterType="hashmap" resultType="com.example.demo.model.Emp">
+		SELECT * FROM EMP WHERE EMPNO = #{empNo}
+	</select>
+	
+	
+	<select id="selectSalGradeList" parameterType="hashmap" resultType="com.example.demo.model.Emp">
+		SELECT 
+			*
+		FROM	
+			SALGRADE
+	</select>
 </mapper>

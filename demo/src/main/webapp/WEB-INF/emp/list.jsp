@@ -29,6 +29,14 @@
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
         <h1>EMP 리스트</h1>
 
+        <label for="salgrade-select">급여등급</label>
+        <select id="salgrade-select" v-model="salgrade" @change="getEmpList">
+            <option value="">전체</option>
+            <option v-for="item in salgradeList" :value="item.grade">{{item.grade}}등급</option>
+        </select>
+
+        <hr>
+
         <table>
             <thead>
                 <tr>
@@ -64,7 +72,9 @@
                         {{item.empno}}
                     </td>
                     <td>
-                        {{item.ename}}
+                        <a href="javascript:;" @click="viewEmployee(item.empno)">
+                            {{item.ename}}
+                        </a>
                     </td>
                     <td>
                         {{item.dname}}
@@ -96,14 +106,18 @@
         data() {
             return {
                 // 변수 - (key : value)
-                list: []
+                list: [],
+                salgrade:"",
+                salgradeList: [],
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             getEmpList : function () {
                 let self = this;
-                let param = {};
+                let param = {
+                    salgrade: self.salgrade
+                };
                 $.ajax({
                     url: "http://localhost:8080/emp/list.dox",
                     dataType: "json",
@@ -140,12 +154,31 @@
                         }
                     }
                 });
+            },viewEmployee: function(empNo){
+                location.href = "/emp/view.do?empNo=" + empNo;
+
+
+
+            }, loadSalgradeSelect : function(){
+                let self = this;
+                let param = {};
+                $.ajax({
+                    url: "http://localhost:8080/emp/get-salgrade-list.dox",
+                    dataType: "json",
+                    type: "POST",
+                    data: param,
+                    success: function (data) {
+                        console.log(data);
+                        self.salgradeList = data.salgradeList;
+                    }
+                });
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
             self.getEmpList();
+            self.loadSalgradeSelect();
         }
     });
 
