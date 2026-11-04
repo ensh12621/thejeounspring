@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.BoardMapper">
+
+	<select id="selectBoardList" resultType="com.example.demo.model.Board" parameterType="hashmap">
+		select BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME FROM TBL_BOARD;
+	</select>
+	
+	<delete id="deleteBoard" parameterType="hashmap">
+		DELETE FROM TBL_BOARD WHERE BOARDNO= #{boardNo}
+	</delete>
+
+	<delete id="deleteBoardAll" parameterType="hashmap">
+		DELETE FROM TBL_BOARD WHERE BOARDNO IN 
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</delete>
+	
+</mapper>
+

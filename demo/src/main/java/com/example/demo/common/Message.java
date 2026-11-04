@@ -7,5 +7,8 @@ public class Message {
 	public static final String lIST_SUCCESS = "목록을 조회했습니다.";
 	public static final String lIST_FAILED = "목록을 조회에 실패했습니다.";
 	
+	public static final String DELETE_SUCCESS = "게시글을 삭제하였습니다.";
+	public static final String DELETE_FAILED = "게시글 삭제에 실패하였습니다.";
+	
 	
 }
