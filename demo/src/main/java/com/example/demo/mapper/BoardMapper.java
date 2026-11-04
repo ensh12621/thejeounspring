@@ -16,4 +16,8 @@ public interface BoardMapper {
 	
 	// 여러 개 삭제
 	int deleteBoardAll(HashMap<String, Object> requestMap);
+	
+	
+	int selectBoardCount(HashMap<String, Object> requestMap);
+	
 }

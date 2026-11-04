@@ -47,14 +47,14 @@ public class BoardController {
 	@RequestMapping(value = "/remove-all.dox", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String removeAll(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 		String json = map.get("selectItemList").toString();
 		ObjectMapper mapper = new ObjectMapper();
 		List<Object> list = mapper.readValue(json, new TypeReference<List<Object>>() {});
 		map.put("list", list);
 		System.out.println(map);
 
-//		resultMap = boardService.removeBoard(map);
+		resultMap = boardService.removeBoardArticleAll(map);
 
 		return new Gson().toJson(resultMap);
 	}

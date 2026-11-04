@@ -5,7 +5,15 @@
 <mapper namespace="com.example.demo.mapper.BoardMapper">
 
 	<select id="selectBoardList" resultType="com.example.demo.model.Board" parameterType="hashmap">
-		select BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME FROM TBL_BOARD;
+		select 
+			BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME 
+		FROM TBL_BOARD
+		LIMIT #{limit} OFFSET #{offset}
+	</select>
+	
+
+	<select id="selectBoardCount" parameterType="hashmap" resultType="int">
+		select COUNT(*) as cnt FROM TBL_BOARD;
 	</select>
 	
 	<delete id="deleteBoard" parameterType="hashmap">

@@ -31,13 +31,41 @@
         tr:nth-child(even){
             background-color: azure;
         }
+
+        #paging{
+            margin-top:20px;
+            display:flex; 
+            gap:15px; 
+            justify-content:center
+        }
+
+        #paging a{
+            text-decoration: none;;
+        }
+
+        #paging .active{
+            font-weight:bold;
+            color: black;
+            font-size:20px;
+        }
+
     </style>
 </head>
 <body>
     <div id="app">
         <!-- html 코드는 id가 app인 태그 안에서 작업 -->
+        <div style="margin:10px 0; text-align:right;">
+            <select v-model="pageSize" @change="fnList">
+                <option value="5">5개씩 보기</option>
+                <option value="10">10개씩 보기</option>
+                <option value="15">15개씩 보기</option>
+                <option value="25">25개씩 보기</option>
+                
+
+            </select>
+        </div>
         <div>
-            <table>
+            <table style="width:100%;">
                 <tr>
                     <!-- <th>선택  </th> -->
                     <th><input type="checkbox" @click="fnSelectItem" value="true" v-model="checked"></th> 
@@ -58,6 +86,19 @@
                 </tr>
             </table>
         </div>
+
+
+        <div id="paging">
+            <a 
+                v-for="item in idx"
+                :class="{active : currentPage == item}"
+                 href="javascript:;"
+                 @click="currentPage = item; fnList();">
+
+                {{item}}
+            </a>
+        </div>
+
         <div>
             <!-- <button @click="fnRemove">삭제</button> -->
             <button @click="fnRemoveAll">삭제</button>
@@ -75,15 +116,21 @@
                 selectItem : "", // 라디오 버튼으로 삭제 할 때
                 selectItemList : [], // 체크박스로 삭제할 때
                 selectFlg : false,
+                checked : false,
+                idx: 1, // 페이징 갯수(최대 페이지 수)
+                pageSize: 5, // 한 페이지에 보여줄 row 수
+                currentPage: 1, // 현재 페이지
 
-                checked : false
             };
         },
         methods: {
             // 함수(메소드) - (key : function())
             fnList : function () {
                 let self = this;
-                let param = {};
+                let param = {
+                    limit: self.pageSize,
+                    offset: (self.currentPage - 1) * self.pageSize
+                };
                 $.ajax({
                     url: "http://localhost:8080/board/list.dox",
                     dataType: "json",
@@ -92,7 +139,7 @@
                     success: function (data) {
                         console.log(data);
                         self.list = data.boardList;
-
+                        self.idx = Math.ceil(data.count / self.pageSize);
                     }
                 });
             },
@@ -162,7 +209,7 @@
             fnSelect : function(){
                 let self = this;
                 self.checked = self.list.length == self.selectItemList.length;
-            }
+            },
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분

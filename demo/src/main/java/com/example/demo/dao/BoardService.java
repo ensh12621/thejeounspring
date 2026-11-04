@@ -20,9 +20,23 @@ public class BoardService {
 	public Map<String, Object> getAllBoardAticles(HashMap<String, Object> requestMap) {
 		Map<String, Object> resultMap = new HashMap<>();
 		try{
+			
+			// 오브젝트 -> 문자열 -> 숫자
+			String limit = (String)requestMap.get("limit");
+			String offset = (String) requestMap.get("offset");
+			
+			requestMap.put("limit", Integer.parseInt(limit));
+			requestMap.put("offset", Integer.parseInt(offset));
+			
+			
 			List<Board> boardList = boardMapper.selectBoardList(requestMap);
-			resultMap.put("result", "success");
 			resultMap.put("boardList", boardList);
+
+			int count = boardMapper.selectBoardCount(requestMap);
+			resultMap.put("count", count);
+			
+			resultMap.put("result", "success");
+			
 			return resultMap;
 		}catch(Exception e){
 			resultMap.put("result", "failed");
