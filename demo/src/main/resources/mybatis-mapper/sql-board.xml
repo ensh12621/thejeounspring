@@ -1,31 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.demo.mapper.BoardMapper">
 
-	<select id="selectBoardList" resultType="com.example.demo.model.Board" parameterType="hashmap">
-		select 
-			BOARDNO, TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME, UDATETIME 
-		FROM TBL_BOARD
+	<select id="selectBoardList" resultType="com.example.demo.model.Board"
+		parameterType="hashmap">
+		select
+			B.*,
+			U.*
+		FROM TBL_BOARD B
+			JOIN TBL_USER U ON U.USER_ID = B.USERID
+		WHERE 
+			TITLE LIKE CONCAT('%', #{keyword} ,'%')
 		LIMIT #{limit} OFFSET #{offset}
 	</select>
-	
 
 	<select id="selectBoardCount" parameterType="hashmap" resultType="int">
-		select COUNT(*) as cnt FROM TBL_BOARD;
+		select COUNT(*) as cnt
+		FROM TBL_BOARD
+		WHERE TITLE LIKE CONCAT('%', #{keyword} ,'%')
 	</select>
-	
+
 	<delete id="deleteBoard" parameterType="hashmap">
 		DELETE FROM TBL_BOARD WHERE BOARDNO= #{boardNo}
 	</delete>
 
-	<delete id="deleteBoardAll" parameterType="hashmap">
-		DELETE FROM TBL_BOARD WHERE BOARDNO IN 
-		<foreach collection="list" item="item" open="(" close=")" separator=",">
+	<delete id="deleteBoardAll" parameterType="hashmap"> DELETE FROM TBL_BOARD
+		WHERE BOARDNO IN <foreach collection="list" item="item" open="("
+			close=")" separator=",">
 			#{item}
 		</foreach>
 	</delete>
 	
+	
+	
+	<update id="updateBoard" parameterType="hashmap">
+		UPDATE TBL_BOARD 
+		SET title = #{title}, contents = #{contents}, kind =#{kind}, UDATETIME = now()
+		WHERE BOARDNO = #{boardNo} 
+	</update>
+
+
+	<insert id="insertBoard" parameterType="hashmap" useGeneratedKeys="true" keyColumn="BOARDNO" keyProperty="boardNo">
+		INSERT INTO TBL_BOARD(TITLE, CONTENTS, USERID, CNT, KIND, CDATETIME,
+		UDATETIME) VALUES(
+		#{title}, #{contents}, #{sessionIdw}, 0, #{kind}, now(), now()
+		)
+	</insert>
+
+	<select id="selectBoard" resultType="com.example.demo.model.Board" parameterType="hashmap">
+		select
+			B.*, U.*
+		FROM TBL_BOARD B
+		JOIN TBL_USER U ON U.USER_ID = B.USERID 
+		WHERE B.BOARDNO = #{boardNo}
+	</select>
+	
+	<update id="viewCnt" parameterType="hashmap">
+		UPDATE TBL_BOARD SET CNT = CNT+1 WHERE BOARDNO = #{boardNo}
+	</update>
+	
+	
+	
+	<select id="getReplyList" parameterType="hashmap" resultType="com.example.demo.model.Reply">
+		SELECT C.*,U.* 
+		FROM TBL_BOARD_COMMENT C
+		JOIN TBL_USER U ON C.USERID = U.USER_ID
+		WHERE	
+			C.BOARDNO = #{boardNo}
+		ORDER BY
+			C.COMMENTNO DESC
+	</select>
+	
+	<select id="selectBoardReply" parameterType="hashmap" resultType="com.example.demo.model.Reply">
+		SELECT *
+		FROM TBL_BOARD_COMMENT
+		WHERE COMMENTNO = #{commentNo}	
+	</select>
+	
+	<delete id="deleteBoardReply" parameterType="hashmap">
+		DELETE FROM TBL_BOARD_COMMENT WHERE COMMENTNO = #{commentNo}
+	</delete>
+
+	<insert id="insertBoardFile" parameterType="hashmap">
+		INSERT INTO TBL_BOARD_FILE VALUES (
+			NULL, #{idx}, #{path}, #{fileName}, #{orgName}, #{size}, #{extName} 
+		)
+	</insert>
+	
+	<select id="selectBoardFile" resultType="com.example.demo.model.File" parameterType="hashmap">
+		select
+			*
+		FROM TBL_BOARD_FILE
+		WHERE BOARDNO = #{boardNo}
+	</select>
+
+	<insert id="insertBoardReply" parameterType="hashmap">
+		INSERT INTO TBL_BOARD_COMMENT(BOARDNO, P_COMMENTNO, CONTENTS, USERID, CDATETIME, UDATETIME)
+		VALUES (#{boardNo}, null, #{contents}, #{sessionId}, now(), null)
+	</insert>
+	
+	<!--int editBoardReply(HashMap<String, Object> requestMap);-->
+	
+	<update id="editBoardReply" parameterType="hashmap">
+		UPDATE TBL_BOARD_COMMENT SET CONTENTS = #{contents} WHERE COMMENTNO = #{commentNo}
+	</update>
+	
+
 </mapper>
 

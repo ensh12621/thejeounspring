@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.demo.mapper.ProductMapper">
+	<select id="selectProductList" parameterType="hashmap"
+		resultType="com.example.demo.model.Product"> 
+		SELECT *, ROUND(PRICE, 0) AS PRICE_FORMATTED FROM PRODUCT WHERE 1=1 AND STATUS = 'SALE' <if
+			test="category != null and category != ''">
+			AND CATEGORY = #{category}
+		</if>
+		<choose>
+			<when test="order == 1">
+				ORDER BY PRICE ASC
+			</when>
+			<when test="order == 2">
+				ORDER BY PRICE DESC
+			</when>
+			<when test="order == 3">
+				ORDER BY RELEASE_DATE DESC
+			</when>
+			<otherwise>
+				ORDER BY PRODUCT_ID ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="selectProduct" parameterType="hashmap"
+		resultType="com.example.demo.model.Product">
+		SELECT *,
+		ROUND(PRICE, 0) AS PRICE_FORMATTED
+		FROM PRODUCT
+		WHERE PRODUCT_ID = #{productId}
+	</select>
+
+	<select id="selectCategoryList" parameterType="hashmap"
+		resultType="com.example.demo.model.Product">
+		SELECT DISTINCT CATEGORY
+		FROM PRODUCT
+		WHERE STATUS = 'SALE'
+	</select>
+
+	<!--int updateProductForRemoval(HashMap<String, Object> requestMap);-->
+
+	<update id="updateProductForRemoval" parameterType="hashmap">
+		UPDATE PRODUCT SET STATUS = 'STOP' WHERE PRODUCT_ID = #{productId}
+	</update>
+
+	<insert id="insertProduct" parameterType="hashmap" useGeneratedKeys="true"
+		keyColumn="PRODUCT_ID" keyProperty="productId">
+		INSERT INTO PRODUCT(PRODUCT_NAME, CATEGORY, DESCRIPTION, STATUS) VALUES(
+		#{productName}, #{category}, #{description}, 'SALE'
+		)
+	</insert>
+
+	<insert id="insertProductFile" parameterType="hashmap">
+		INSERT INTO PRODUCT_FILE VALUES (
+		NULL, #{idx}, #{path}, #{fileName}, #{orgName}, #{size}, #{extName}
+		)
+	</insert>
+
+	<select id="selectProductFile" resultType="com.example.demo.model.File" parameterType="hashmap">
+		select
+			*
+		FROM PRODUCT_FILE
+		WHERE PRODUCT_ID = #{productId}
+	</select>
+	
+	<!--List<Product> selectProductWithSumPrice(HashMap<String, Object> requestMap);-->
+	<select id="selectProductWithSumPrice" parameterType="hashmap" resultType="com.example.demo.model.Product">
+	select
+		p.product_name,
+	    sum(o.order_price) as sum
+	from
+		product p
+	    join product_orders o on p.product_id = o.product_id
+	group by
+		p.product_name
+
+	</select>
+
+</mapper>

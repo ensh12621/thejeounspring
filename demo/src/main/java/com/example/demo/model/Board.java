@@ -17,4 +17,6 @@ public class Board {
 	private String kind;
 	private String cDateTime;
 	private String uDateTime;
+	private String userName;
+	
 }

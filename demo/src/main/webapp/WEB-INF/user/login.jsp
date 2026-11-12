@@ -44,7 +44,11 @@
 
         <div>
             <button @click="login">로그인</button>
-            <button>회원가입</button>
+            <button @click="join">회원가입</button>
+            <a :href="location">
+                <img src="/img/kakao.png" alt="소셜로그인">
+            </a>
+            
         </div>
     </div>
 </body>
@@ -56,7 +60,8 @@
             return {
                 // 변수 - (key : value)
                 userId:"",
-                userPwd:""
+                userPwd:"",
+                location : "${location}"
             };
         },
         methods: {
@@ -87,15 +92,19 @@
                     success: function (data) {
                         alert(data.message);
                         if(data.result == "success"){
-                            location.href = "/professor/list.do";
+                            //location.href = "/professor/list.do";
+                            location.href = data.url;
                         }
                     }
                 });
+            }, join: function(){
+                location.href = "/join.do";
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
+            console.log(self.location);
         }
     });
 

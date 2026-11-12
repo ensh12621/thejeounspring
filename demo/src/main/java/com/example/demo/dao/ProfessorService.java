@@ -17,13 +17,25 @@ public class ProfessorService {
 	private ProfessorMapper professorMapper;
 
 	public Map<String, Object> getProfessorList(Map<String, Object> requestMap) {
+		String limit = (String) requestMap.get("limit");
+		String offset = (String)requestMap.get("offset");
+		
+		requestMap.put("limit", Integer.parseInt(limit));
+		requestMap.put("offset", Integer.parseInt(offset));
+		
 		List<Professor> list = professorMapper.selectProfessorList(requestMap);
 		System.out.println(requestMap);
 		Map<String, Object> resultMap = new HashMap<>();
 		resultMap.put("list", list);
+		
+		int cnt = professorMapper.selectProfessorCount(requestMap);
+		resultMap.put("count", cnt);
+		
 		List<Professor> deptList =professorMapper.selectDepartmentList(requestMap);
 		resultMap.put("deptList", deptList);
 		resultMap.put("result", "success");
+		
+		
 		return resultMap;
 	}
 

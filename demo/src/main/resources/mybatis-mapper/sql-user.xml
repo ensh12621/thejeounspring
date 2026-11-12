@@ -5,13 +5,15 @@
 <mapper namespace="com.example.demo.mapper.UserMapper">
 
 	<select id="selectUser" parameterType="hashmap" resultType="com.example.demo.model.User">
-		SELECT * FROM TBL_USER WHERE USER_ID = #{userId} and PWD = #{userPwd}
+		SELECT * 
+		FROM TBL_USER 
+		WHERE USER_ID = #{userId}
 	</select>
 
 
 	<insert id="insertUser" parameterType="hashmap">
-		INSERT INTO TBL_USER(USER_ID, PWD, USER_NAME, ADDR) 
-		VALUES( #{userId}, #{userPwd}, #{userName}, #{addr})
+		INSERT INTO TBL_USER(USER_ID, PWD, USER_NAME, ADDR, ROLE) 
+		VALUES( #{userId}, #{hashPwd}, #{userName}, #{addr}, #{userRole})
 	</insert>
 
 </mapper>

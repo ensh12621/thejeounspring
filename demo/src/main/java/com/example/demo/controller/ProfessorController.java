@@ -51,6 +51,7 @@ public class ProfessorController {
 	public String removeStudent(Model model, @RequestParam HashMap<String, Object> map) throws Exception {
 		Map<String, Object> resultMap = professorService.getProfessorList(map);
 		System.out.println("list.dox 컨트롤러 진입완료");
+		System.out.println(resultMap);
 		return new Gson().toJson(resultMap); 
 	}
 	

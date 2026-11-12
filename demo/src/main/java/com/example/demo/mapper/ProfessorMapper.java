@@ -24,5 +24,7 @@ public interface ProfessorMapper {
 	List<Professor> selectDepartmentList(Map<String, Object> requestMap);
 
 	int updateProfessor(HashMap<String, Object> requestMap);
+
+	int selectProfessorCount(Map<String, Object> requestMap);
 	
 }

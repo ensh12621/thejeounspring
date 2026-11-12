@@ -61,6 +61,7 @@
             <label>
                 주소:
                 <input type="text" v-model="addr">
+                <button @click="fnAddr">주소검색</button>
             </label>
         </div>
         
@@ -76,6 +77,12 @@
 </html>
 
 <script>
+
+    function jusoCallBack(roadFullAddr,roadAddrPart1,addrDetail,roadAddrPart2,engAddr, jibunAddr, zipNo, admCd, rnMgtSn, bdMgtSn,detBdNmList,bdNm,bdKdcd,siNm,sggNm,emdNm,liNm,rn,udrtYn,buldMnnm,buldSlno,mtYn,lnbrMnnm,lnbrSlno,emdNo){
+        window.vueObj.addr = roadFullAddr;
+
+    }
+
     const app = Vue.createApp({
         data() {
             return {
@@ -101,7 +108,7 @@
                 }
 
                 // 2. 아이디는 영어 소문자+숫자 조합
-                const idRegEx = /^(?=.*[a-z])(?=.*\d)[a-z0-9]+$/;
+                const idRegEx =  /^[a-z](?=.*[0-9])[a-z0-9]*$/;
                 if(!(idRegEx.test(self.userId))){
                     alert("아이디는 영어 소문자와 숫자의 조합이어야 하며 영어 소문자로 시작해야 합니다.");
                     return;
@@ -114,6 +121,14 @@
                 }
 
                 // 4. 비밀번호는 특수문자 필수 포함
+
+                const isOnlyAlphaNum = /^[a-zA-Z0-9]+$/;
+                if(isOnlyAlphaNum.test(self.userPwd)){
+                    alert("비밀번호에 특수문자가 포함되어야 합니다.");
+                    return;
+                }
+
+
 
                 // 5. 비밀번호와 비밀번호 확인은 같아야 함
                 if(self.userPwd != self.userPwd2){
@@ -137,24 +152,27 @@
                     addr:self.addr
                 };
                 $.ajax({
-                    url: "http://localhost:8080/join.dox",
+                    url: "http://localhost:8080/user/add.dox",
                     dataType: "json",
                     type: "POST",
                     data: param,
                     success: function (data) {
-                        console.log(data);
-                        if(data.result == "success"){
-                            alert("가입 성공");
-                        }else{
-                            alert("가입 실패");
+                        if(data.result == 'success'){
+                            alert("추가하였습니다.");
+                            location.href = "/login.do";
                         }
                     }
                 });
+            },
+            fnAddr: function(){
+                window.open("/addr.do", "addr", "width=500, height=500");
+
             }
         }, // methods
         mounted() {
             // 처음 시작할 때 실행되는 부분
             let self = this;
+            window.vueObj = this;
         }
     });
 

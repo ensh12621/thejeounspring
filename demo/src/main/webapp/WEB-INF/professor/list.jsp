@@ -28,6 +28,36 @@
             tr:nth-child(even) {
                 background-color: azure;
             }
+
+
+            #paging {
+                margin-top: 20px;
+                display: flex;
+                gap: 15px;
+                justify-content: center
+            }
+
+            #paging a {
+                text-decoration: none;
+                ;
+            }
+
+            #paging .active {
+                font-weight: bold;
+                color: black;
+                font-size: 20px;
+            }
+
+            .search {
+                text-align: center;
+            }
+
+            .search input {
+                outline: none;
+                border: 0 none;
+                border-bottom: 1px solid black;
+                padding: 2px 10px;
+            }
         </style>
     </head>
 
@@ -43,7 +73,17 @@
                 <button @click="fnList">검색</button>
             </div>
 
-            <div style="margin:10px 0 ; display:flex; gap:10px"> 
+            <div>
+                <select v-model="pageSize" @change="currentPage=1; fnList()">
+                    <option value="3">3개씩</option>
+                    <option value="10">10개씩</option>
+                    <option value="15">15개씩</option>
+                    <option value="20">20개씩</option>
+                </select>
+            </div>
+
+
+            <div style="margin:10px 0 ; display:flex; gap:10px">
                 <label>학과
                     <select name="" id="" v-model="deptNo" @change="fnList">
                         <option value="" selected>:: 전체 ::</option>
@@ -52,8 +92,8 @@
 
                         </option>
                     </select>
-                </label> 
-                
+                </label>
+
                 <label>직급
                     <select name="" id="" v-model="position" @change="fnList">
                         <option value="" selected>:: 전체 ::</option>
@@ -62,7 +102,7 @@
                         <option value="조교수">조교수</option>
                         <option value="정교수">정교수</option>
                     </select>
-                </label> 
+                </label>
 
             </div>
 
@@ -117,11 +157,11 @@
                     <tr v-if="list.length == 0">
                         <td colspan="6">
                             조건에 맞는 데이터가 없습니다.
-                            
+
                         </td>
 
                     </tr>
-                    
+
                 </tbody>
             </table>
 
@@ -131,6 +171,17 @@
 
                 </a>
             </div>
+
+            <div id="paging">
+                <a href="javascript:;" v-if="currentPage != 1" @click="currentPage--;fnList();">◀</a>
+                <a v-for="item in idx" :class="{active : currentPage == item}" href="javascript:;"
+                    @click="currentPage = item; fnList();">
+
+                    {{item}}
+                </a>
+                <a href="javascript:c;" v-if="currentPage != idx" @click="currentPage++;fnList()">▶</a>
+            </div>
+
         </div>
     </body>
 
@@ -145,7 +196,10 @@
                     keyword: "",
                     deptList: [],
                     deptNo: "",
-                    position: ""
+                    position: "",
+                    pageSize: 3,
+                    idx: 1,
+                    currentPage: 1,
                 };
             },
             methods: {
@@ -155,7 +209,9 @@
                     let param = {
                         keyword: self.keyword,
                         deptNo: self.deptNo,
-                        position:self.position
+                        position: self.position,
+                        limit: self.pageSize,
+                        offset: (self.currentPage - 1) * self.pageSize,
                     };
 
                     $.ajax({
@@ -167,6 +223,8 @@
                             console.log(data);
                             self.list = data.list;
                             self.deptList = data.deptList;
+                            self.idx = Math.ceil(data.count / self.pageSize);
+                            console.log("idx:" + self.idx);
                         }
                     });
                 }, removeProfessor: function (profNo) {
